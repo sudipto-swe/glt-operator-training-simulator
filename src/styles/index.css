@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/* Design tokens (RGB triplets consumed by tailwind.config.ts)         */
+/* ------------------------------------------------------------------ */
+:root {
+  --c-bg: 243 245 249;
+  --c-surf: 255 255 255;
+  --c-surf2: 238 241 247;
+  --c-line: 210 216 228;
+  --c-ink: 17 26 43;
+  --c-ink2: 92 104 125;
+  --c-acc: 13 122 210;
+  --c-ok: 5 150 105;
+  --c-warn: 180 120 8;
+  --c-bad: 200 60 47;
+  --c-crit: 205 32 32;
+}
+
+.dark {
+  --c-bg: 9 14 26;
+  --c-surf: 17 26 43;
+  --c-surf2: 24 35 57;
+  --c-line: 42 55 82;
+  --c-ink: 226 232 240;
+  --c-ink2: 140 155 180;
+  --c-acc: 56 189 248;
+  --c-ok: 52 211 153;
+  --c-warn: 251 191 36;
+  --c-bad: 248 113 113;
+  --c-crit: 239 68 68;
+}
+
+html {
+  color-scheme: light;
+}
+.dark html,
+html:has(.dark) {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-bg text-ink font-sans antialiased;
+  margin: 0;
+}
+
+/* Accessible focus ring everywhere */
+*:focus-visible {
+  outline: 2px solid rgb(var(--c-acc));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--c-line));
+  border-radius: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ------------------------------------------------------------------ */
+/* Component helpers                                                   */
+/* ------------------------------------------------------------------ */
+@layer components {
+  .panel {
+    @apply bg-surf border border-line rounded-xl shadow-sm;
+  }
+  .panel-pad {
+    @apply p-4;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line
+      bg-surf2 px-3 py-1.5 text-sm font-medium text-ink transition-colors
+      hover:bg-line/60 disabled:cursor-not-allowed disabled:opacity-40;
+  }
+  .btn-primary {
+    @apply border-transparent bg-acc text-white hover:brightness-110;
+  }
+  .btn-ok {
+    @apply border-transparent bg-ok text-white hover:brightness-110;
+  }
+  .btn-danger {
+    @apply border-transparent bg-bad text-white hover:brightness-110;
+  }
+  .inp {
+    @apply rounded-lg border border-line bg-surf px-3 py-1.5 text-sm text-ink
+      placeholder:text-ink2 disabled:opacity-40;
+  }
+  .pill {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold;
+  }
+  .value {
+    @apply font-mono tabular-nums;
+  }
+}
+
+/* Alarm blink for ACTIVE_UNACK (disabled for reduced motion) */
+.alarm-blink {
+  animation: alarm-pulse 1s steps(2, start) infinite;
+}
+@keyframes alarm-pulse {
+  0% { background-color: rgb(var(--c-crit) / 0.28); }
+  100% { background-color: rgb(var(--c-crit) / 0.08); }
+}
+
+/* Conveyor flow animation on the line mimic */
+.conveyor-flow {
+  stroke-dasharray: 6 6;
+  animation: conveyor-move 0.6s linear infinite;
+}
+@keyframes conveyor-move {
+  to { stroke-dashoffset: -12; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .alarm-blink {
+    animation: none;
+    background-color: rgb(var(--c-crit) / 0.25);
+  }
+  .conveyor-flow {
+    animation: none;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Training Pack print styles: print the document, not the app shell */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-doc,
+  .print-doc * {
+    visibility: visible;
+  }
+  .print-doc {
+    position: absolute;
+    inset: 0;
+    padding: 2rem;
+    background: white;
+    color: black;
+  }
+}
